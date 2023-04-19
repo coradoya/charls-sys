@@ -9,23 +9,21 @@ pub type CharlsResult<T> = std::result::Result<T, Box<dyn Error>>;
 
 #[derive(Default)]
 pub struct Decoder {
-    decoder: Option<*mut charls_jpegls_decoder>
+    decoder: Option<*mut charls_jpegls_decoder>,
 }
 
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub struct Encoder {
-    encoder: Option<*mut charls_jpegls_encoder>
+    encoder: Option<*mut charls_jpegls_encoder>,
 }
 
 impl Decoder {
     pub fn new() -> CharlsResult<Self> {
-        let decoder = unsafe {
-            charls_jpegls_decoder_create()
-        };
+        let decoder = unsafe { charls_jpegls_decoder_create() };
 
         if !decoder.is_null() {
             Ok(Decoder {
-                decoder: Some(decoder)
+                decoder: Some(decoder),
             })
         } else {
             Err("Faile to start jpeg-ls decoder".into())
@@ -35,17 +33,11 @@ impl Decoder {
     pub fn decode(&self, src: Vec<u8>, dst: &mut Vec<u8>, stride: u32) -> CharlsResult<()> {
         if let Some(decoder) = self.decoder {
             let err = unsafe {
-                charls_jpegls_decoder_set_source_buffer(
-                    decoder,
-                    src.as_ptr() as _,
-                    src.len()
-                )
+                charls_jpegls_decoder_set_source_buffer(decoder, src.as_ptr() as _, src.len())
             };
 
             if err == 0 {
-                let err = unsafe {
-                    charls_jpegls_decoder_read_header(decoder)
-                };
+                let err = unsafe { charls_jpegls_decoder_read_header(decoder) };
 
                 if err == 0 {
                     let size = unsafe {
@@ -53,7 +45,7 @@ impl Decoder {
                         let size_err = charls_jpegls_decoder_get_destination_size(
                             decoder,
                             stride,
-                            &mut computed_size
+                            &mut computed_size,
                         );
 
                         if size_err == 0 {
@@ -71,7 +63,7 @@ impl Decoder {
                                     decoder,
                                     dst.as_mut_ptr() as _,
                                     size,
-                                    stride
+                                    stride,
                                 )
                             };
 
@@ -81,7 +73,7 @@ impl Decoder {
                                 Err("Unable to decode jpeg-ls".into())
                             }
                         }
-                        None => Err("Unable to compute decompressed size".into())
+                        None => Err("Unable to compute decompressed size".into()),
                     }
                 } else {
                     Err("Unable to read jpeg-ls header".into())
@@ -97,20 +89,25 @@ impl Decoder {
 
 impl Encoder {
     pub fn new() -> CharlsResult<Self> {
-        let encoder = unsafe {
-            charls_jpegls_encoder_create()
-        };
+        let encoder = unsafe { charls_jpegls_encoder_create() };
 
         if !encoder.is_null() {
             Ok(Encoder {
-                encoder: Some(encoder)
+                encoder: Some(encoder),
             })
         } else {
             Err("Faile to start jpeg-ls decoder".into())
         }
     }
 
-    pub fn encode(&self, width: u32, height: u32, bits_per_sample: i32, component_count: i32, src: &mut Vec<u8>) -> CharlsResult<Vec<u8>> {
+    pub fn encode(
+        &self,
+        width: u32,
+        height: u32,
+        bits_per_sample: i32,
+        component_count: i32,
+        src: &mut Vec<u8>,
+    ) -> CharlsResult<Vec<u8>> {
         let frame_info = charls_frame_info {
             width,
             height,
@@ -120,7 +117,10 @@ impl Encoder {
 
         if let Some(encoder) = self.encoder {
             let err = unsafe {
-                charls_jpegls_encoder_set_frame_info(encoder, &frame_info as *const charls_frame_info)
+                charls_jpegls_encoder_set_frame_info(
+                    encoder,
+                    &frame_info as *const charls_frame_info,
+                )
             };
 
             if err != 0 {
@@ -128,9 +128,8 @@ impl Encoder {
             }
 
             let mut size = 0;
-            let err = unsafe {
-                charls_jpegls_encoder_get_estimated_destination_size(encoder, &mut size)
-            };
+            let err =
+                unsafe { charls_jpegls_encoder_get_estimated_destination_size(encoder, &mut size) };
 
             if err != 0 {
                 return Err("Unable to estimage the destination size".into());
@@ -138,7 +137,11 @@ impl Encoder {
 
             let mut buffer: Vec<u8> = vec![0; size];
             let err = unsafe {
-                charls_jpegls_encoder_set_destination_buffer(encoder, buffer.as_mut_ptr() as *mut std::os::raw::c_void, size)
+                charls_jpegls_encoder_set_destination_buffer(
+                    encoder,
+                    buffer.as_mut_ptr() as *mut std::os::raw::c_void,
+                    size,
+                )
             };
 
             if err != 0 {
@@ -146,16 +149,19 @@ impl Encoder {
             }
 
             let err = unsafe {
-                charls_jpegls_encoder_encode_from_buffer(encoder, src.as_mut_ptr() as *mut std::os::raw::c_void, src.len(), 0)
+                charls_jpegls_encoder_encode_from_buffer(
+                    encoder,
+                    src.as_mut_ptr() as *mut std::os::raw::c_void,
+                    src.len(),
+                    0,
+                )
             };
 
             if err != 0 {
                 return Err("Unable to encode the image".into());
             }
 
-            let err = unsafe {
-                charls_jpegls_encoder_get_bytes_written(encoder, &mut size)
-            };
+            let err = unsafe { charls_jpegls_encoder_get_bytes_written(encoder, &mut size) };
 
             if err != 0 {
                 Err("Unable to get written bytes".into())
@@ -168,8 +174,6 @@ impl Encoder {
         }
     }
 }
-
-
 
 impl Drop for Decoder {
     fn drop(&mut self) {
