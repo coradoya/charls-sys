@@ -2,10 +2,7 @@ use std::env;
 use std::path::PathBuf;
 
 fn out_dir() -> PathBuf {
-    PathBuf::from(
-        env::var("OUT_DIR")
-            .expect("OUT_DIR environment variable should be defined")
-    )
+    PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR environment variable should be defined"))
 }
 
 fn main() {
@@ -14,12 +11,12 @@ fn main() {
     let mut config = cmake::Config::new("charls");
     let dst = config.build();
 
-    #[cfg(feature="static")]
+    #[cfg(feature = "static")]
     {
         println!("cargo:rustc-link-lib=static=charls");
     }
 
-    #[cfg(not(feature="static"))]
+    #[cfg(not(feature = "static"))]
     {
         println!("cargo:rustc-link-lib=charls");
     }
@@ -52,6 +49,7 @@ fn main() {
         .allowlist_function("charls_jpegls_encoder_set_interleave_mode")
         .allowlist_function("charls_jpegls_encoder_set_near_lossless")
         .allowlist_function("charls_jpegls_encoder_set_preset_coding_parameters")
+        .allowlist_function("charls_get_error_message")
         .blocklist_type("charls_encoding_options")
         .blocklist_type("charls_interleave_mode")
         .blocklist_type("charls_jpegls_errc")
