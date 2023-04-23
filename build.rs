@@ -1,9 +1,9 @@
-use std::env;
-use std::path::PathBuf;
+// use std::env;
+// use std::path::PathBuf;
 
-fn out_dir() -> PathBuf {
-    PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR environment variable should be defined"))
-}
+// fn out_dir() -> PathBuf {
+//     PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR environment variable should be defined"))
+// }
 
 fn main() {
     println!("cargo:rerun-if-changed=wrapper.h");
