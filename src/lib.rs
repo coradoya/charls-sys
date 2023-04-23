@@ -4,7 +4,8 @@
 
 use std::error::Error;
 use std::ffi::CStr;
-include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+// include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+include!("charls.rs");
 
 pub type CharlsResult<T> = Result<T, Box<dyn Error>>;
 
