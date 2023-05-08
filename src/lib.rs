@@ -97,6 +97,7 @@ impl CharLS {
         height: u32,
         bits_per_sample: i32,
         component_count: i32,
+        near: i32,
         src: &mut Vec<u8>,
     ) -> CharlsResult<Vec<u8>> {
         let encoder = match self.encoder {
@@ -122,17 +123,13 @@ impl CharLS {
             charls_jpegls_encoder_set_frame_info(encoder, &frame_info as *const charls_frame_info)
         };
 
-        if err != 0 {
-            return Err("Unable to set the frame info".into());
-        }
+        self.translate_error(err)?;
 
         let mut size = 0;
         let err =
             unsafe { charls_jpegls_encoder_get_estimated_destination_size(encoder, &mut size) };
 
-        if err != 0 {
-            return Err("Unable to estimage the destination size".into());
-        }
+        self.translate_error(err)?;
 
         let mut buffer: Vec<u8> = vec![0; size];
         let err = unsafe {
@@ -143,9 +140,11 @@ impl CharLS {
             )
         };
 
-        if err != 0 {
-            return Err("Unable to set the destination buffer".into());
-        }
+        self.translate_error(err)?;
+
+        let err = unsafe { charls_jpegls_encoder_set_near_lossless(encoder, near) };
+
+        self.translate_error(err)?;
 
         let err = unsafe {
             charls_jpegls_encoder_encode_from_buffer(
@@ -156,9 +155,7 @@ impl CharLS {
             )
         };
 
-        if err != 0 {
-            return Err("Unable to encode the image".into());
-        }
+        self.translate_error(err)?;
 
         let err = unsafe { charls_jpegls_encoder_get_bytes_written(encoder, &mut size) };
 
