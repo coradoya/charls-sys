@@ -30,13 +30,10 @@ impl CharLS {
     }
 
     pub fn decode(&mut self, src: Vec<u8>, dst: &mut Vec<u8>, stride: u32) -> CharlsResult<()> {
-        let decoder = match self.decoder {
-            Some(decoder) => decoder,
-            None => {
-                self.decoder = Some(unsafe { charls_jpegls_decoder_create() });
-                self.decoder.unwrap()
-            }
-        };
+        let decoder = self.decoder.unwrap_or_else(|| {
+            self.decoder = Some(unsafe { charls_jpegls_decoder_create() });
+            self.decoder.unwrap()
+        });
 
         if decoder.is_null() {
             return Err("Unable to start the codec".into());
@@ -98,15 +95,12 @@ impl CharLS {
         bits_per_sample: i32,
         component_count: i32,
         near: i32,
-        src: &mut Vec<u8>,
+        src: &[u8],
     ) -> CharlsResult<Vec<u8>> {
-        let encoder = match self.encoder {
-            Some(encoder) => encoder,
-            None => {
-                self.encoder = Some(unsafe { charls_jpegls_encoder_create() });
-                self.encoder.unwrap()
-            }
-        };
+        let encoder = self.encoder.unwrap_or_else(|| {
+            self.encoder = Some(unsafe { charls_jpegls_encoder_create() });
+            self.encoder.unwrap()
+        });
 
         if encoder.is_null() {
             return Err("Unable to start the codec".into());
@@ -146,11 +140,12 @@ impl CharLS {
 
         self.translate_error(err)?;
 
+        let mut data = src.to_vec();
         let err = unsafe {
             charls_jpegls_encoder_encode_from_buffer(
                 encoder,
-                src.as_mut_ptr() as *mut std::os::raw::c_void,
-                src.len(),
+                data.as_mut_ptr() as *mut std::os::raw::c_void,
+                data.len(),
                 0,
             )
         };
