@@ -10,7 +10,6 @@ links = "charls"
 [dependencies]
 
 [build-dependencies]
-bindgen = "0.65"
 cmake = "0.1"
 
 [features]
