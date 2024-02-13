@@ -1,8 +1,5 @@
-use std::env;
-
 fn main() {
     println!("cargo:rerun-if-changed=wrapper.h");
-    let target = env::var("TARGET").unwrap();
 
     let dst = cmake::Config::new("charls")
         .define("BUILD_SHARED_LIBS", "0")
@@ -19,9 +16,11 @@ fn main() {
         println!("cargo:rustc-link-lib=charls");
     }
 
-    if !target.contains("msvc") {
-        println!("cargo:rustc-link-lib=stdc++");
-    }
+    #[cfg(target_os = "linux")]
+    println!("cargo:rustc-link-lib=stdc++");
+
+    #[cfg(target_os = "macos")]
+    println!("cargo:rustc-link-lib=c++");
 
     println!("cargo:rustc-link-search=native={}/lib", dst.display());
 }
