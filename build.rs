@@ -16,11 +16,16 @@ fn main() {
         println!("cargo:rustc-link-lib=charls");
     }
 
-    #[cfg(target_os = "linux")]
-    println!("cargo:rustc-link-lib=stdc++");
-
-    #[cfg(target_os = "macos")]
-    println!("cargo:rustc-link-lib=c++");
-
+    if let Ok(inner) = std::env::var("CARGO_CFG_TARGET_OS") {
+        match inner.as_str() {
+            "linux" => {
+                println!("cargo:rustc-link-lib=stdc++");
+            }
+            "macos" => {
+                println!("cargo:rustc-link-lib=c++");
+            }
+            _ => {}
+        }
+    }
     println!("cargo:rustc-link-search=native={}/lib", dst.display());
 }
