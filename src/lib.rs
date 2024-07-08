@@ -29,7 +29,7 @@ impl CharLS {
         Ok(())
     }
 
-    pub fn decode(&mut self, src: Vec<u8>, dst: &mut Vec<u8>, stride: u32) -> CharlsResult<()> {
+    pub fn decode(&mut self, src: &[u8], dst: &mut Vec<u8>, stride: u32) -> CharlsResult<()> {
         let decoder = self.decoder.unwrap_or_else(|| {
             self.decoder = Some(unsafe { charls_jpegls_decoder_create() });
             self.decoder.unwrap()
