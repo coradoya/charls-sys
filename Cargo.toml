@@ -1,11 +1,16 @@
 [package]
-name = "charls-sys"
-version = "0.1.0"
-authors = ["Douglas Yau <dy@dicomserver.net>"]
-edition = "2021"
-description = "Bindgen bindings to charls"
+authors = ["Douglas Yau <dy@coradoya.com>"]
 build = "build.rs"
+description = "Bindings for charls"
+edition = "2021"
+keywords = ["charls", "libcharls", "image", "jpegls"]
+homepage = "https://github.com/coradoya/charls-sys"
+repository = "https://github.com/coradoya/charls-sys"
+license = "MIT"
 links = "charls"
+name = "charls-sys"
+readme = "README.md"
+version = "0.1.0"
 
 [dependencies]
 
@@ -15,4 +20,3 @@ cmake = "0.1"
 [features]
 default = []
 static = []
-gdcm = []
