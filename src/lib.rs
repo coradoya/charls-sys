@@ -29,7 +29,7 @@ impl CharLS {
         Ok(())
     }
 
-    pub fn decode(&mut self, src: &[u8], dst: &mut Vec<u8>, stride: u32) -> CharlsResult<()> {
+    pub fn decode(&mut self, src: &[u8], stride: u32) -> CharlsResult<Vec<u8>> {
         let decoder = self.decoder.unwrap_or_else(|| {
             self.decoder = Some(unsafe { charls_jpegls_decoder_create() });
             self.decoder.unwrap()
@@ -63,7 +63,7 @@ impl CharLS {
 
         match size {
             Some(size) => {
-                dst.resize(size, 0);
+                let mut dst = Vec::with_capacity(size);
                 let err = unsafe {
                     charls_jpegls_decoder_decode_to_buffer(
                         decoder,
@@ -74,7 +74,7 @@ impl CharLS {
                 };
 
                 if err == 0 {
-                    Ok(())
+                    Ok(dst)
                 } else {
                     let message = unsafe {
                         let msg = charls_get_error_message(err);
