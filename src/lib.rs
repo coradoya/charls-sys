@@ -63,7 +63,7 @@ impl CharLS {
 
         match size {
             Some(size) => {
-                let mut dst = Vec::with_capacity(size);
+                let mut dst = vec![0; size];
                 let err = unsafe {
                     charls_jpegls_decoder_decode_to_buffer(
                         decoder,
