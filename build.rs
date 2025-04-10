@@ -3,6 +3,7 @@ fn main() {
 
     let dst = cmake::Config::new("charls")
         .define("BUILD_SHARED_LIBS", "0")
+        .define("CMAKE_LINK_DEPENDS_USE_LINKER", "0")
         .always_configure(true)
         .build();
 
