@@ -10,7 +10,7 @@ license = "MIT"
 links = "charls"
 name = "charls-sys"
 readme = "README.md"
-version = "2.4.3"
+version = "2.4.4"
 include = [
     "LICENSE.md",
     "README.md",
