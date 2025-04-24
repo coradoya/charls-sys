@@ -11,6 +11,20 @@ links = "charls"
 name = "charls-sys"
 readme = "README.md"
 version = "2.4.3"
+include = [
+    "LICENSE.md",
+    "README.md",
+    "build.rs",
+    "wrapper.h",
+    "src",
+    "charls/LICENSE.md",
+    "charls/CMakeLists.txt",
+    "charls/CMakePresets.json",
+    "charls/CharLS.sln",
+    "charls/CharLS.sln.properties",
+    "charls/include",
+    "charls/src",
+]
 
 [dependencies]
 
