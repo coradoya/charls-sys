@@ -27,6 +27,7 @@ include = [
 ]
 
 [dependencies]
+link-cplusplus = "1.0"
 
 [build-dependencies]
 cmake = "0.1"
