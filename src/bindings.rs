@@ -324,9 +324,9 @@ fn bindgen_test_layout_charls_spiff_header() {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct charls_frame_info {
-    #[doc = " <summary>\n Width of the image, range [1, 65535].\n </summary>"]
+    #[doc = " <summary>\n Width of the image, range [1, 100000].\n </summary>"]
     pub width: u32,
-    #[doc = " <summary>\n Height of the image, range [1, 65535].\n </summary>"]
+    #[doc = " <summary>\n Height of the image, range [1, 100000].\n </summary>"]
     pub height: u32,
     #[doc = " <summary>\n Number of bits per sample, range [2, 16]\n </summary>"]
     pub bits_per_sample: i32,

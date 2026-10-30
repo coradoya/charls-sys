@@ -4,3 +4,6 @@ extern crate link_cplusplus;
 
 mod bindings;
 pub use bindings::*;
+
+#[cfg(test)]
+mod tests;
