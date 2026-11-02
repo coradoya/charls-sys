@@ -3,7 +3,12 @@ fn main() {
 
     #[cfg(not(feature = "vcpkg"))]
     {
-        let dst = cmake::Config::new("charls")
+        let mut config = cmake::Config::new("charls");
+        // Rust always links the release MSVC CRT; a Debug CMake build needs the debug CRT (_CrtDbgReport).
+        if std::env::var("CARGO_CFG_TARGET_ENV").as_deref() == Ok("msvc") {
+            config.profile("Release");
+        }
+        let dst = config
             .define("BUILD_SHARED_LIBS", "0")
             .define("CMAKE_LINK_DEPENDS_USE_LINKER", "0")
             .define("CHARLS_BUILD_TESTS", "0")
